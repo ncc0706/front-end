@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FormData</title>
+</head>
+<body>
+
+
+<form action="" id="register">
+
+    username: <input type="text" name="username"/><br/>
+    password: <input type="password" name="password"/><br/>
+    file: <input type="file" id="file" name="files[]"/><br/>
+    <input type="button" value="submit" id="submit">
+
+</form>
+
+<script src="https://cdn.bootcss.com/jquery/3.3.0/jquery.js"></script>
+<script type="text/javascript">
+    $(function () {
+
+
+        $('#submit').on('click', function () {
+
+            let register = $('#register')[0]
+            let formData = new FormData(register)
+            console.info(formData)
+            console.info(formData.get("username"))
+
+            register = document.getElementById('register')
+            formData = new FormData(register)
+            console.info(formData)
+            console.info(formData.get("username"))
+
+
+
+            for(var i=0; i<$('#file')[0].files.length;i++){
+                formData.append('file[]', $('#file')[0].files[i]);
+            }
+
+            console.info(formData.get("file[]"))
+        })
+
+
+    })
+</script>
+</body>
+</html>

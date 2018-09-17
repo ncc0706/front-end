@@ -1,0 +1,50 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+<form id="example">
+    username: <input type="text" name="username"/><br/>
+    password: <input type="password" name="password"/><br/>
+    file: <input type="file" id="files" multiple/><br/>
+    <input type="submit" value="提交"/>
+</form>
+<div id='file-list-display'></div>
+<script type="text/javascript">
+    $(function () {
+        let fileList = [];
+        const fileCatcher = $('#example');
+        const files = $("#files");
+        const fileListDisplay = $('#file-list-display');
+
+        fileCatcher.on("submit", function (event) {
+            event.preventDefault();
+            //上传文件
+            let formData = new FormData(fileCatcher[0]);
+
+            //循环添加到formData中
+            fileList.forEach(function (file) {
+                formData.append('files', file, file.name);
+            })
+            const request = new XMLHttpRequest();
+            request.open("POST", "upload");
+            request.send(formData);
+        });
+
+        files.on("change", function (event) {
+            for (var i = 0; i < files[0].files.length; i++) {
+                fileList.push(files[0].files[i]);
+            }
+            let content = '';
+            fileList.forEach(function (file, index) {
+                content += '<p>' + (index + 1) + ":" + file.name + '</p>';
+
+            })
+            fileListDisplay.html(content);
+        });
+    })
+</script>
+</body>
+</html>
