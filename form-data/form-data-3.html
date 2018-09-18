@@ -1,0 +1,71 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>FileReader图片预览</title>
+    <script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+</head>
+<body>
+<!--支持图片预览-->
+<form id="example">
+    username: <input type="text" name="username"/><br/>
+    password: <input type="password" name="password"/><br/>
+    file: <input type="file" id="files" multiple/><br/>
+    <input type="submit" value="提交"/>
+</form>
+<div id='file-list-display'></div>
+<div id="uploadPreview"></div>
+
+<script type="text/javascript">
+    "user strict";
+
+    $(function () {
+        if (typeof FileReader === 'undefined') {
+            alert('抱歉，你的浏览器不支持 FileReader');
+        }
+
+        // 低版本浏览器不会识别let语法
+        let fileList = [];
+        const fileCatcher = $('#example');
+        const files = $("#files");
+        const fileListDisplay = $('#file-list-display');
+        // 图片预览
+        const uploadPreview = $('#uploadPreview');
+
+        fileCatcher.on("submit", function (event) {
+            event.preventDefault();
+            //上传文件
+            let formData = new FormData(fileCatcher[0]);
+
+            //循环添加到formData中
+            fileList.forEach(function (file) {
+                formData.append('files', file, file.name);
+            })
+            const request = new XMLHttpRequest();
+            request.open("POST", "upload");
+            request.send(formData);
+        });
+
+        files.on("change", function (event) {
+            for (var i = 0; i < files[0].files.length; i++) {
+                fileList.push(files[0].files[i]);
+            }
+            let content = ''
+            let imgPreview = ''
+            fileList.forEach(function (file, index) {
+                content += '<p>' + (index + 1) + ":" + file.name + '</p>';
+                const fileReader = new FileReader();
+                fileReader.readAsDataURL(file)
+                fileReader.onload = function (e) {
+                    const imgFile = e.target.result
+                    imgPreview += '<img src="' + imgFile + '" title="' + file.name + '" width="400px"/>'
+                    // console.log(imgPreview)
+                    uploadPreview.empty()
+                    uploadPreview.append(imgPreview)
+                }
+            })
+            fileListDisplay.html(content)
+        });
+    })
+</script>
+</body>
+</html>
