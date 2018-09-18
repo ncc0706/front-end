@@ -38,7 +38,9 @@
 
             //循环添加到formData中
             fileList.forEach(function (file) {
-                formData.append('files', file, file.name);
+                if (validateType(file)) {
+                    formData.append('files', file, file.name);
+                }
             })
             const request = new XMLHttpRequest();
             request.open("POST", "upload");
@@ -52,20 +54,32 @@
             let content = ''
             let imgPreview = ''
             fileList.forEach(function (file, index) {
-                content += '<p>' + (index + 1) + ":" + file.name + '</p>';
-                const fileReader = new FileReader();
-                fileReader.readAsDataURL(file)
-                fileReader.onload = function (e) {
-                    const imgFile = e.target.result
-                    imgPreview += '<img src="' + imgFile + '" title="' + file.name + '" width="400px"/>'
-                    // console.log(imgPreview)
-                    uploadPreview.empty()
-                    uploadPreview.append(imgPreview)
+
+                if (validateType(file)) {
+                    content += '<p>' + (index + 1) + ":" + file.name + '</p>';
+                    const fileReader = new FileReader();
+                    fileReader.readAsDataURL(file)
+                    fileReader.onload = function (e) {
+                        const imgFile = e.target.result
+                        imgPreview += '<img src="' + imgFile + '" title="' + file.name + '" width="400px"/>'
+                        // console.log(imgPreview)
+                        uploadPreview.empty()
+                        uploadPreview.append(imgPreview)
+                    }
                 }
             })
             fileListDisplay.html(content)
         });
     })
+
+    // 校验文件类型
+    function validateType(file) {
+        if (!/image\/\w+/.test(file.type)) {
+            alert("只能选择图片");
+            return false;
+        }
+        return true;
+    }
 </script>
 </body>
 </html>
