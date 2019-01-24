@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<script>
+
+    function demo() {
+
+
+    }
+
+    console.log(demo.prototype);
+
+    let bar = {};
+
+    bar.name = 'javascript';
+    bar.age = 10;
+
+    // undefined
+    console.log(bar.prototype);
+
+    // 对象转json字符串
+    const json_bar = JSON.stringify(bar);
+    console.log(json_bar);
+
+    // json字符串转对象
+    const obj_bar = JSON.parse(json_bar);
+    console.log(obj_bar);
+    console.log(obj_bar.age);
+
+
+    // prototype 是作用于函数之上的, 能够引用prototype的绝对是函数
+
+
+    // js object对象和function函数区别？
+
+
+
+</script>
+
+</body>
+</html>
