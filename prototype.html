@@ -13,8 +13,42 @@
 
     }
 
-    console.log(demo.prototype);
+    console.log(demo.prototype); //prototype是函数的属性，其本质是函数原型对象
+    console.log(JSON.stringify(demo.prototype));
 
+
+    demo.prototype.name = 'proto';
+    console.log(JSON.stringify(demo.prototype));
+
+    demo.prototype.get = function (message) {
+        return 'Hello ' + message;
+    }
+
+    console.log(demo.prototype); //prototype是函数的属性，其本质是函数原型对象
+
+    // 函数实例化出对象.
+    const obj_demo = new demo();
+
+    // 通过对象的方式调用
+    console.log(obj_demo.get('javascript.'));
+
+    console.warn('====================================');
+
+    console.log(Array.prototype); //    数组
+    console.log(String.prototype); //   字符串
+    console.log(Object.prototype); //   对象
+
+    console.warn('====================================');
+    console.log('---------->>>>>>Array')
+
+    const arr1 = [23, 9, "A", "B", "C", 99];
+
+    console.log(arr1.slice(0));
+    console.log(arr1.slice(2, 5));
+    console.log(JSON.stringify(Array.prototype.slice()));
+
+
+    console.warn('====================================');
     let bar = {};
 
     bar.name = 'javascript';
@@ -37,7 +71,6 @@
 
 
     // js object对象和function函数区别？
-
 
 
 </script>
