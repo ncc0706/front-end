@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>调试rsa加密算法</title>
+
+
+    <script>
+
+        window.publicKey = 'ddc1b17fe4c89d81461d885b81b261f16ce20e5170810f87319fa34233b437aa33c71fc111aa9256af607b997c51ba5cf6f537fa75ad7425c32049e9443082756e002c966bdf82a9febae17369faf215c7d82baa8afd973ac92ba8d33eb779ec024dba1a451805b47510237c5e5901da59e7a818896160a76cd32171a35e8034307a9828118c318745499dc491186c2748f225e6817a9d959ac143b4e0e5896d17e53f9c4a03e7d7ecf3947c2ed6cbe6058c61dd9a44637844c11f0a4308dae5de5bd24519e5e09ea60f4ec81f32f8ae8fe55c4237c607c15b17158cf5ae91268c6a76a8e6ced80fafc8969a09db41dc07a9a6c18bc060885d0fede70ca33aa1';
+        window.exponent = '10001';
+
+        function RSAKey() {
+            this.n = null;
+            this.e = 0;
+            this.coeff = this.dmq1 = this.dmp1 = this.q = this.p = this.d = null
+        }
+
+
+        RSAKey.prototype.setPublic = RSASetPublic;
+
+        RSAKey.prototype.encrypt_back = RSAEncrypt_back;
+
+        function RSASetPublic(b, a) {
+            console.log(this); //RSAKey
+            if (b != null && a != null && b.length > 0 && a.length > 0) {
+                this.n = parseBigInt(b, 16);
+                this.e = parseInt(a, 16);
+            } else alert("Invalid RSA public key");
+        }
+
+        function RSAEncrypt_back(data) {
+            data = pkcs1pad2_bak(data, this.n.bitLength() + 7 >> 3);
+
+            if (data == null) return null;
+
+            data = this.doPublic(data);
+
+
+        }
+
+
+        function pkcs1pad2_bak(data, num) {
+            if (num < data.length + 11) {
+                alert("Message too long for RSA");
+                return null
+            }
+
+            for (var c = [], d = data.length - 1; d >= 0 && num > 0;) {
+                var e = data.charCodeAt(d--);
+                if (e < 128) c[--num] = e; else if (e > 127 && e < 2048) {
+                    c[--num] = e & 63 | 128;
+                    c[--num] = e >> 6 | 192
+                } else {
+                    c[--num] = e & 63 | 128;
+                    c[--num] = e >> 6 & 63 | 128;
+                    c[--num] = e >> 12 | 224
+                }
+            }
+            c[--num] = 0;
+            d = new SecureRandom;
+            for (e = []; num > 2;) {
+                for (e[0] = 0; e[0] == 0;) d.nextBytes(e);
+                c[--num] = e[0]
+            }
+            c[--num] = 2;
+            c[--num] = 0;
+            return new BigInteger(c)
+        }
+
+        Arcfour.prototype.init = ARC4init;
+        Arcfour.prototype.next = ARC4next;
+
+        function Arcfour() {
+            this.j = this.i = 0;
+            this.S = []
+        }
+
+        function ARC4init(b) {
+            var a, c, d;
+            for (a = 0; a < 256; ++a) this.S[a] = a;
+            for (a = c = 0; a < 256; ++a) {
+                c = c + this.S[a] + b[a % b.length] & 255;
+                d = this.S[a];
+                this.S[a] = this.S[c];
+                this.S[c] = d
+            }
+            this.j = this.i = 0
+        }
+
+        function ARC4next() {
+            var b;
+            this.i = this.i + 1 & 255;
+            this.j = this.j + this.S[this.i] & 255;
+            b = this.S[this.i];
+            this.S[this.i] = this.S[this.j];
+            this.S[this.j] = b;
+            return this.S[b + this.S[this.i] & 255]
+        }
+
+        function prng_newstate() {
+            return new Arcfour
+        }
+
+
+
+        function SecureRandom() {
+
+        }
+
+        SecureRandom.prototype.nextBytes = rng_get_bytes;
+
+        var rng_psize = 256, rng_state, rng_pool, rng_pptr;
+
+        function rng_get_bytes(b) {
+            let a;
+            for (a = 0; a < b.length; ++a) {
+                b[a] = rng_get_byte()
+            }
+        }
+
+        function rng_get_byte() {
+            if (rng_state == null) {
+                rng_seed_time();
+                rng_state = prng_newstate();
+                rng_state.init(rng_pool);
+                for (rng_pptr = 0; rng_pptr < rng_pool.length; ++rng_pptr) rng_pool[rng_pptr] = 0;
+                rng_pptr = 0
+            }
+            return rng_state.next()
+        }
+
+
+        function parseBigInt(b, a) {
+            return new BigInteger(b, a)
+        }
+
+        function BigInteger(b, a, c) {
+            null != b && ("number" == typeof b ? this.fromNumber(b, a, c) : null == a && "string" != typeof b ? this.fromString(b, 256) : this.fromString(b, a))
+        }
+
+
+        function do_encrypt(data) {
+            const publicKey = window.publicKey;
+
+            let rsaKey = new RSAKey;
+            rsaKey.setPublic(publicKey, window.exponent);
+
+            if (data = rsaKey.encrypt_back(data)) {
+                return data;
+            }
+            alert("加密失败")
+        }
+
+        (function () {
+            let data = {
+                cvn2: '250',
+                expire: "0325",
+                enCvn2: ')xo'
+            };
+            data = JSON.stringify(data);
+
+            do_encrypt(data);
+        })()
+
+    </script>
+
+
+</head>
+<body>
+
+</body>
+</html>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>RSA-DEMO</title>
     <script src='https://cdn.bootcss.com/jquery/3.2.0/jquery.min.js'></script>
-    <script src="js/encryptpd.js"></script>
+    <script src="encryptpd.js"></script>
 </head>
 <body>
 
@@ -13,11 +13,15 @@
 
 
     let data = {
-        name: 'rsa'
+        cvn2: '250',
+        expire: "0325",
+        enCvn2: 'o<U'
     };
 
-    let encrypt = window.atmRSA.do_encrypt(JSON.stringify(data));
-    // console.log(encrypt);
+
+    let doEncrypt = do_encrypt(data);
+    console.log(doEncrypt);
+    console.log(hello());
 
 </script>
 
